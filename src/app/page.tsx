@@ -1,18 +1,16 @@
-// app/page.tsx
 import React from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import Navbar from '../components/ui/navbar';
+import type { Metadata } from 'next';
 
-const Home: React.FC = () => {
+export const metadata: Metadata = {
+  title: 'YK Agency Hub | Build Your RaaS Agency',
+  description: 'Create your own Robotics as a Service (RaaS) agency with YK Agency Hub. Access tools, templates, and guidance to launch your automation business.',
+};
+
+export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800">
-      <Head>
-        <title>YK Agency Hub | Build Your RaaS Agency</title>
-        <meta name="description" content="Create your own Robotics as a Service (RaaS) agency with YK Agency Hub. Access tools, templates, and guidance to launch your automation business." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <Navbar />
 
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -44,41 +42,15 @@ const Home: React.FC = () => {
           <h2 className="text-3xl font-bold text-center mb-8">How to Create Your RaaS Agency</h2>
           <div className="max-w-3xl mx-auto">
             <ol className="space-y-6">
-              <li className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                <div>
-                  <h3 className="text-xl font-semibold">Sign Up for YK Agency Hub</h3>
-                  <p>Create your account to access all our resources and tools.</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
-                <div>
-                  <h3 className="text-xl font-semibold">Define Your Niche</h3>
-                  <p>Use our market research tools to identify the best agricultural niche for your agency.</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
-                <div>
-                  <h3 className="text-xl font-semibold">Create Your Business Plan</h3>
-                  <p>Utilize our business plan templates and financial projection tools.</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">4</div>
-                <div>
-                  <h3 className="text-xl font-semibold">Launch Your Website</h3>
-                  <p>Choose from our selection of customizable landing page templates.</p>
-                </div>
-              </li>
-              <li className="flex items-center space-x-4">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">5</div>
-                <div>
-                  <h3 className="text-xl font-semibold">Start Acquiring Clients</h3>
-                  <p>Use our marketing strategies and sales tools to attract and convert clients.</p>
-                </div>
-              </li>
+              {['Sign Up for YK Agency Hub', 'Define Your Niche', 'Create Your Business Plan', 'Launch Your Website', 'Start Acquiring Clients'].map((step, index) => (
+                <li key={step} className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">{index + 1}</div>
+                  <div>
+                    <h3 className="text-xl font-semibold">{step}</h3>
+                    <p>{getStepDescription(step)}</p>
+                  </div>
+                </li>
+              ))}
             </ol>
           </div>
         </section>
@@ -100,11 +72,26 @@ const Home: React.FC = () => {
 
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2024 YK Agency Hub. All rights reserved.</p>
+          <p>&copy; 2024 YK Agency Hub.</p>
         </div>
       </footer>
     </div>
   );
-};
+}
 
-export default Home;
+function getStepDescription(step: string): string {
+  switch (step) {
+    case 'Sign Up for YK Agency Hub':
+      return 'Create your account to access all our resources and tools.';
+    case 'Define Your Niche':
+      return 'Use our market research tools to identify the best agricultural niche for your agency.';
+    case 'Create Your Business Plan':
+      return 'Utilize our business plan templates and financial projection tools.';
+    case 'Launch Your Website':
+      return 'Choose from our selection of customizable landing page templates.';
+    case 'Start Acquiring Clients':
+      return 'Use our marketing strategies and sales tools to attract and convert clients.';
+    default:
+      return '';
+  }
+}

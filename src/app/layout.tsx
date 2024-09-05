@@ -7,8 +7,8 @@ import UserCreationWrapper from "./user-creation-wrapper";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MY Connect",
-  description: "MY Connect App",
+  title: "YKAH",
+  description: "YKAGENCYHUB",
 };
 
 export default function RootLayout({
