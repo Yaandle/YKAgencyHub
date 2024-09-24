@@ -4,13 +4,12 @@ import React, { useState } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileCard from '@/components/ProfileCard';
+import Calendar from '@/components/Calendar';
+import DailyHours from '@/components/DailyHours';
 import IntroSection from '@/components/dashboard/IntroSection';
-import UseCasesSection from '@/components/dashboard/UseCasesSection';
-import BusinessModelSection from '@/components/dashboard/BusinessModelSection';
-import AgencyStepsSection from '@/components/dashboard/AgencyStepsSection';
-import ClientAcquisitionSection from '@/components/dashboard/ClientAcquisitionSection';
-import YKSolutionsSection from '@/components/dashboard/YKSolutionsSection';
-import TrainingSection from '@/components/dashboard/TrainingSection';
+import CreateJobForm from '@/components/CreateJobs';
+import Link from 'next/link';
+
 
 const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,11 +27,18 @@ const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = 
   );
 };
 
+
 const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showCreateJobForm, setShowCreateJobForm] = useState(false);
 
   if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (!user) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -61,30 +67,32 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                <div className="mt-6">
+                  <Calendar />
+                </div>
+                <div className="mt-6">
+                  <DailyHours selectedDate={selectedDate} />
+                </div>
               </div>
               
               {/* Main Content */}
-              <div className="lg:col-span-2 text-black ">
+              <div className="lg:col-span-2 text-black">
                 <DropdownSection title="Introduction to Robotics and Automation">
                   <IntroSection />
                 </DropdownSection>
-                <DropdownSection title="Use Cases for Robotic Solutions">
-                  <UseCasesSection />
-                </DropdownSection>
-                <DropdownSection title="RaaS Business Models and Benefits">
-                  <BusinessModelSection />
-                </DropdownSection>
-                <DropdownSection title="Steps to Starting Your RaaS Agency">
-                  <AgencyStepsSection />
-                </DropdownSection>
-                <DropdownSection title="Finding and Onboarding Clients">
-                  <ClientAcquisitionSection />
-                </DropdownSection>
-                <DropdownSection title="Connecting Clients with YK Solutions">
-                  <YKSolutionsSection />
-                </DropdownSection>
-                <DropdownSection title="Training Resources and Support">
-                  <TrainingSection />
+                
+                {/* New Job Management Section */}
+                <DropdownSection title="Job Management">
+                  <button
+                    onClick={() => setShowCreateJobForm(!showCreateJobForm)}
+                    className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    {showCreateJobForm ? 'Hide Job Form' : 'Create New Job'}
+                  </button>
+                  {showCreateJobForm && <CreateJobForm />}
+                  <Link href="/dashboard/jobs" className="text-blue-500 hover:text-blue-700">
+                    View All Jobs
+                  </Link>
                 </DropdownSection>
               </div>
             </div>

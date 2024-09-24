@@ -13,6 +13,11 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as calendar from "../calendar.js";
+import type * as dailyHours from "../dailyHours.js";
+import type * as jobs from "../jobs.js";
+import type * as mutations from "../mutations.js";
+import type * as queries from "../queries.js";
 import type * as users from "../users.js";
 
 /**
@@ -24,6 +29,11 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  calendar: typeof calendar;
+  dailyHours: typeof dailyHours;
+  jobs: typeof jobs;
+  mutations: typeof mutations;
+  queries: typeof queries;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
