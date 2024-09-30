@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 
-export const getMonthlyCalendar = query({
+export const getMonthlyJobs = query({
   args: {
     year: v.number(),
     month: v.number(),
@@ -17,72 +17,32 @@ export const getMonthlyCalendar = query({
     if (!user) throw new Error("User not found");
 
     const { year, month } = args;
-    const startDate = new Date(year, month, 1).getTime();
-    const endDate = new Date(year, month + 1, 0).getTime();
+    const startOfMonth = new Date(year, month, 1).getTime();
+    const endOfMonth = new Date(year, month + 1, 0).getTime();
 
-    const events = await ctx.db
-      .query("calendar")
-      .withIndex("by_user_and_date", (q) =>
-        q.eq("userId", user._id).gte("date", startDate).lte("date", endDate)
+    const jobs = await ctx.db
+      .query("jobs")
+      .filter((q) => 
+        q.and(
+          q.eq(q.field("createdBy"), user._id),
+          q.or(
+            q.and(
+              q.gte(q.field("startDate"), startOfMonth),
+              q.lte(q.field("startDate"), endOfMonth)
+            ),
+            q.and(
+              q.gte(q.field("endDate"), startOfMonth),
+              q.lte(q.field("endDate"), endOfMonth)
+            ),
+            q.and(
+              q.lte(q.field("startDate"), startOfMonth),
+              q.gte(q.field("endDate"), endOfMonth)
+            )
+          )
+        )
       )
       .collect();
 
-    return events;
-  },
-});
-
-export const getWeeklyCalendar = query({
-  args: {
-    startDate: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-    
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("User not found");
-
-    const { startDate } = args;
-    const endDate = startDate + 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
-
-    const events = await ctx.db
-      .query("calendar")
-      .withIndex("by_user_and_date", (q) =>
-        q.eq("userId", user._id).gte("date", startDate).lt("date", endDate)
-      )
-      .collect();
-
-    return events;
-  },
-});
-
-export const getDailyCalendar = query({
-  args: {
-    date: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-    
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("User not found");
-
-    const { date } = args;
-    const nextDay = date + 24 * 60 * 60 * 1000; // Next day in milliseconds
-
-    const events = await ctx.db
-      .query("calendar")
-      .withIndex("by_user_and_date", (q) =>
-        q.eq("userId", user._id).gte("date", date).lt("date", nextDay)
-      )
-      .collect();
-
-    return events;
+    return jobs;
   },
 });

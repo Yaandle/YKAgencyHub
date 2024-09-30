@@ -80,4 +80,10 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+
+  .job-date {
+    background-color: #e6f2ff; /* Light blue background */
+    border-radius: 50%; /* Circular highlight */
+  }
 }
+

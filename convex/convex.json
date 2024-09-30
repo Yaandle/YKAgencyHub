@@ -1,0 +1,4 @@
+{
+  "functions": "convex/**/*.ts",
+  "react": "convex/_generated/react"
+}

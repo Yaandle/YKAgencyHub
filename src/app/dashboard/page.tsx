@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from "@clerk/nextjs";
+import { useQuery } from 'convex/react';
+import { api } from "@/convex/_generated/api";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileCard from '@/components/ProfileCard';
 import Calendar from '@/components/Calendar';
@@ -9,7 +11,6 @@ import DailyHours from '@/components/DailyHours';
 import IntroSection from '@/components/dashboard/IntroSection';
 import CreateJobForm from '@/components/CreateJobs';
 import Link from 'next/link';
-
 
 const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,11 +28,12 @@ const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = 
   );
 };
 
-
 const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
+
+  const jobCount = useQuery(api.jobs.getJobCount);
 
   if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (!user) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
@@ -44,7 +46,7 @@ const Dashboard: React.FC = () => {
     <div className="bg-gray-100 min-h-screen">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">RaaS Agency Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         </div>
       </header>
       <main>
@@ -62,26 +64,23 @@ const Dashboard: React.FC = () => {
                       <p className="text-2xl text-black font-bold">0</p>
                     </div>
                     <div className="bg-green-100 p-4 rounded">
-                      <p className="text-sm text-green-600">Active Projects</p>
-                      <p className="text-2xl text-black font-bold">0</p>
+                      <p className="text-sm text-green-600">Jobs</p>
+                      <p className="text-2xl text-black font-bold">
+                        {jobCount !== undefined ? jobCount : 'Loading...'}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="mt-6">
+                <div className="mt-6" style={{ width: '3600px', height: '600px' }}>
                   <Calendar />
                 </div>
-                <div className="mt-6">
+                <div className="mt-6" style={{ width: '3600px', height: '600px' }}>
                   <DailyHours selectedDate={selectedDate} />
                 </div>
               </div>
-              
+  
               {/* Main Content */}
               <div className="lg:col-span-2 text-black">
-                <DropdownSection title="Introduction to Robotics and Automation">
-                  <IntroSection />
-                </DropdownSection>
-                
-                {/* New Job Management Section */}
                 <DropdownSection title="Job Management">
                   <button
                     onClick={() => setShowCreateJobForm(!showCreateJobForm)}

@@ -54,7 +54,32 @@ export const updateJob = mutation({
 export const deleteJob = mutation({
   args: { id: v.id("jobs") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
+
+    // Optional: Check if the user has permission to delete this job
+    // if (job.createdBy !== identity.subject) throw new Error("Not authorized");
+
     await ctx.db.delete(args.id);
+  },
+});
+
+export const completeJob = mutation({
+  args: { id: v.id("jobs") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    
+    const job = await ctx.db.get(args.id);
+    if (!job) throw new Error("Job not found");
+
+    // Optional: Check if the user has permission to complete this job
+    // if (job.createdBy !== identity.subject) throw new Error("Not authorized");
+
+    await ctx.db.patch(args.id, { status: "completed" });
   },
 });
 
@@ -82,3 +107,24 @@ export const listJobs = query({
       .collect();
   },
 });
+
+export const getJobCount = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+    if (!user) throw new Error("User not found");
+
+    const jobs = await ctx.db
+      .query("jobs")
+      .filter((q) => q.eq(q.field("createdBy"), user._id))
+      .collect();
+
+    return jobs.length;
+  },
+});
+
