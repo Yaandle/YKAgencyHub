@@ -17,8 +17,8 @@ export const getMonthlyJobs = query({
     if (!user) throw new Error("User not found");
 
     const { year, month } = args;
-    const startOfMonth = new Date(year, month, 1).getTime();
-    const endOfMonth = new Date(year, month + 1, 0).getTime();
+    const startOfMonth = new Date(year, month - 1, 1).getTime();
+    const endOfMonth = new Date(year, month, 0).getTime();
 
     const jobs = await ctx.db
       .query("jobs")
@@ -42,6 +42,8 @@ export const getMonthlyJobs = query({
         )
       )
       .collect();
+
+    console.log("Fetched jobs:", jobs); // Debug log
 
     return jobs;
   },

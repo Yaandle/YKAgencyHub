@@ -1,16 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from 'convex/react';
 import { api } from "@/convex/_generated/api";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileCard from '@/components/ProfileCard';
-import Calendar from '@/components/Calendar';
-import DailyHours from '@/components/DailyHours';
-import IntroSection from '@/components/dashboard/IntroSection';
+import CalendarSystem from '@/components/Calendar';
 import CreateJobForm from '@/components/CreateJobs';
-import Link from 'next/link';
+import JobList from '@/components/dashboard/joblist';
 
 const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,17 +28,12 @@ const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = 
 
 const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
 
   const jobCount = useQuery(api.jobs.getJobCount);
 
   if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (!user) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
-
-  const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-  };
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -71,12 +64,6 @@ const Dashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className="mt-6" style={{ width: '3600px', height: '600px' }}>
-                  <Calendar />
-                </div>
-                <div className="mt-6" style={{ width: '3600px', height: '600px' }}>
-                  <DailyHours selectedDate={selectedDate} />
-                </div>
               </div>
   
               {/* Main Content */}
@@ -89,10 +76,16 @@ const Dashboard: React.FC = () => {
                     {showCreateJobForm ? 'Hide Job Form' : 'Create New Job'}
                   </button>
                   {showCreateJobForm && <CreateJobForm />}
-                  <Link href="/dashboard/jobs" className="text-blue-500 hover:text-blue-700">
-                    View All Jobs
-                  </Link>
+                  <DropdownSection title="View All Jobs">
+                    <JobList />
+                  </DropdownSection>
                 </DropdownSection>
+
+                {/* Calendar System */}
+                <div className="mt-6 bg-white shadow-lg rounded-lg p-6">
+                  <h2 className="text-xl text-black font-semibold mb-4">Job Schedule</h2>
+                  <CalendarSystem />
+                </div>
               </div>
             </div>
           </div>

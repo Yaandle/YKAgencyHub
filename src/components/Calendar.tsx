@@ -1,25 +1,23 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Calendar } from "@nextui-org/calendar";
 import { CalendarDate, DateValue, today, getLocalTimeZone } from '@internationalized/date';
-import DailyHours from './DailyHours';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
 export default function CalendarSystem() {
-  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
+  const [selectedDate, setSelectedDate] = useState<DateValue>(() => today(getLocalTimeZone()));
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() };
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
   });
 
   const jobs = useQuery(api.calendar.getMonthlyJobs, currentMonth);
 
   const handleDateChange = (date: DateValue) => {
-    const jsDate = new Date(date.year, date.month - 1, date.day);
-    setSelectedDate(jsDate);
+    setSelectedDate(date);
 
-    if (date.month !== currentMonth.month + 1 || date.year !== currentMonth.year) {
-      setCurrentMonth({ year: date.year, month: date.month - 1 });
+    if (date.month !== currentMonth.month || date.year !== currentMonth.year) {
+      setCurrentMonth({ year: date.year, month: date.month });
     }
   };
 
@@ -32,7 +30,8 @@ export default function CalendarSystem() {
       const endDate = new Date(job.endDate);
       
       while (currentDate <= endDate) {
-        dates.add(currentDate.toISOString().split('T')[0]);
+        const dateString = currentDate.toISOString().split('T')[0];
+        dates.add(dateString);
         currentDate.setDate(currentDate.getDate() + 1);
       }
     });
@@ -42,12 +41,21 @@ export default function CalendarSystem() {
 
   useEffect(() => {
     const style = document.createElement('style');
-    const cssRules = Array.from(jobDates).map(date => 
-      `.nextui-calendar-days [aria-label="${date}"] { 
-        background-color: #e6f2ff !important; 
-        border-radius: 50%; 
-      }`
-    ).join('\n');
+    const cssRules = `
+      .nextui-calendar-days button {
+        color: black !important;
+      }
+      ${Array.from(jobDates).map(date => {
+        const [year, month, day] = date.split('-');
+        return `
+          .nextui-calendar-days [aria-label="${month}/${day}/${year}"],
+          .nextui-calendar-days [aria-label="${date}"] { 
+            background-color: #e6f2ff !important; 
+            border-radius: 50%; 
+          }
+        `;
+      }).join('\n')}
+    `;
 
     style.textContent = cssRules;
     document.head.appendChild(style);
@@ -58,13 +66,20 @@ export default function CalendarSystem() {
   }, [jobDates]);
 
   return (
-    <div className="flex gap-x-4">
+    <div className="w-full">
       <Calendar 
-        aria-label="Date Selection" 
+        aria-label="Job Schedule Calendar" 
+        value={selectedDate}
         onChange={handleDateChange}
         defaultValue={today(getLocalTimeZone())}
+        visibleMonths={1}
+        showMonthAndYearPickers={true}
+        classNames={{
+          base: "job-calendar w-full",
+          cell: "job-calendar-cell",
+          cellButton: "job-calendar-cell-button",
+        }}
       />
-      <DailyHours selectedDate={selectedDate} />
     </div>
   );
 }
