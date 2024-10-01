@@ -8,7 +8,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileCard from '@/components/ProfileCard';
 import CalendarSystem from '@/components/Calendar';
 import CreateJobForm from '@/components/CreateJobs';
-import JobList from '@/components/dashboard/joblist';
+import JobList from '@/components/dashboard/JobList';
 
 const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);

@@ -7,6 +7,7 @@ export const createJob = mutation({
     description: v.string(),
     startDate: v.number(),
     endDate: v.number(),
+    hours: v.number(),
     assignedUsers: v.array(v.id("users")),
     status: v.string(),
   },
@@ -20,12 +21,13 @@ export const createJob = mutation({
       .first();
     if (!user) throw new Error("User not found");
 
-    const { title, description, startDate, endDate, assignedUsers, status } = args;
+    const { title, description, startDate, endDate, hours, assignedUsers, status } = args;
     return await ctx.db.insert("jobs", {
       title,
       description,
       startDate,
       endDate,
+      hours,
       createdBy: user._id,
       assignedUsers,
       status,
@@ -42,6 +44,7 @@ export const updateJob = mutation({
     description: v.optional(v.string()),
     startDate: v.optional(v.number()),
     endDate: v.optional(v.number()),
+    hours: v.optional(v.number()),
     assignedUsers: v.optional(v.array(v.id("users"))),
     status: v.optional(v.string()),
   },

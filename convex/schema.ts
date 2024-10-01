@@ -20,6 +20,7 @@ export default defineSchema({
     startDate: v.number(),
     endDate: v.number(),
     createdBy: v.id("users"),
+    hours: v.optional(v.number()),
     assignedUsers: v.array(v.id("users")),
     status: v.string(), 
     createdAt: v.number(),

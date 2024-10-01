@@ -1,14 +1,14 @@
 import React from 'react';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@/../convex/_generated/api';
-import { Trash2, CheckSquare } from 'lucide-react';
+import { Trash2, Edit } from 'lucide-react';
 import { Id } from "@/../convex/_generated/dataModel";
 import { Doc } from "@/../convex/_generated/dataModel";
+import Link from 'next/link';
 
 const JobList: React.FC = () => {
   const jobs = useQuery(api.jobs.listJobs);
   const deleteJob = useMutation(api.jobs.deleteJob);
-  const completeJob = useMutation(api.jobs.completeJob);
 
   if (jobs === undefined) {
     return <div>Loading...</div>;
@@ -22,10 +22,6 @@ const JobList: React.FC = () => {
     if (window.confirm('Are you sure you want to delete this job?')) {
       await deleteJob({ id: jobId });
     }
-  };
-
-  const handleCompleteJob = async (jobId: Id<"jobs">) => {
-    await completeJob({ id: jobId });
   };
 
   return (
@@ -42,15 +38,14 @@ const JobList: React.FC = () => {
                   }`}>
                     {job.status}
                   </p>
-                  {job.status !== 'completed' && (
+                  <Link href={`/dashboard/editJobs/${job._id}`}>
                     <button
-                      onClick={() => handleCompleteJob(job._id)}
                       className="text-blue-500 hover:text-blue-700"
-                      title="Mark as Completed"
+                      title="Edit Job"
                     >
-                      <CheckSquare size={20} />
+                      <Edit size={20} />
                     </button>
-                  )}
+                  </Link>
                   <button
                     onClick={() => handleDeleteJob(job._id)}
                     className="text-red-500 hover:text-red-700"
