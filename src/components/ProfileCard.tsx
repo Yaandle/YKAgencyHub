@@ -40,7 +40,7 @@ const ProfileCard: React.FC = () => {
           <p className="font-semibold text-black text-lg">{user.email}</p>
         </div>
         <div className="mb-4">
-          <p className="text-gray-600 text-sm">Agency Name</p>
+          <p className="text-gray-600 text-sm">Business Name</p>
           {editMode ? (
             <input
               type="text"
@@ -69,7 +69,7 @@ const ProfileCard: React.FC = () => {
             onClick={() => setEditMode(true)}
             className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition duration-300"
           >
-            Edit Agency Name
+            Edit Business Name
           </button>
         )}
       </div>
