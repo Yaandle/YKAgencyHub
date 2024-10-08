@@ -94,7 +94,10 @@ export const getJob = query({
 });
 
 export const listJobs = query({
-  handler: async (ctx) => {
+  args: {
+    status: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
     
@@ -104,15 +107,23 @@ export const listJobs = query({
       .first();
     if (!user) throw new Error("User not found");
 
-    return await ctx.db
+    let jobsQuery = ctx.db
       .query("jobs")
-      .filter((q) => q.eq(q.field("createdBy"), user._id))
-      .collect();
+      .filter((q) => q.eq(q.field("createdBy"), user._id));
+
+    if (args.status) {
+      jobsQuery = jobsQuery.filter((q) => q.eq(q.field("status"), args.status));
+    }
+
+    return await jobsQuery.collect();
   },
 });
 
 export const getJobCount = query({
-  handler: async (ctx) => {
+  args: {
+    status: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Not authenticated");
     
@@ -122,12 +133,30 @@ export const getJobCount = query({
       .first();
     if (!user) throw new Error("User not found");
 
-    const jobs = await ctx.db
+    let jobsQuery = ctx.db
       .query("jobs")
-      .filter((q) => q.eq(q.field("createdBy"), user._id))
-      .collect();
+      .filter((q) => q.eq(q.field("createdBy"), user._id));
 
+    if (args.status) {
+      jobsQuery = jobsQuery.filter((q) => q.eq(q.field("status"), args.status));
+    }
+
+    const jobs = await jobsQuery.collect();
     return jobs.length;
   },
 });
 
+export const getAssignedJobs = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+    if (!user) throw new Error("User not found");
+    const allJobs = await ctx.db.query("jobs").collect();
+    return allJobs.filter(job => job.assignedUsers.includes(user._id));
+  },
+});

@@ -6,9 +6,11 @@ export const createOrUpdateUser = mutation({
     clerkId: v.string(),
     email: v.string(),
     name: v.optional(v.string()),
+    userType: v.string(),  // Required userType field
+    agencyName: v.optional(v.string()),  // Optional for Employers
   },
   handler: async (ctx, args) => {
-    const { clerkId, email, name } = args;
+    const { clerkId, email, name, userType, agencyName } = args;
     const existingUser = await ctx.db
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
@@ -18,6 +20,8 @@ export const createOrUpdateUser = mutation({
       return await ctx.db.patch(existingUser._id, {
         email,
         name,
+        userType,  // Ensure userType is saved
+        agencyName: userType === "Employer" ? agencyName : "",  
         updatedAt: Date.now(),
       });
     } else {
@@ -25,13 +29,15 @@ export const createOrUpdateUser = mutation({
         clerkId,
         email,
         name,
-        agencyName: "",
+        userType,  // Set userType
+        agencyName: userType === "Employer" ? agencyName : "",  
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
     }
   },
 });
+
 
 export const updateAgencyName = mutation({
   args: { agencyName: v.string() },

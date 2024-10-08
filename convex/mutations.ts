@@ -91,3 +91,23 @@ export const updateDailyHours = mutation({
     return await ctx.db.patch(id, { hours, updatedAt: Date.now() });
   },
 });
+
+export const updateAgencyName = mutation({
+  args: { agencyName: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+    
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user || user.userType !== "Employer") {
+      throw new Error("Only Employers can have an agency name");
+    }
+
+    await ctx.db.patch(user._id, { agencyName: args.agencyName, updatedAt: Date.now() });
+    return user._id;
+  },
+});

@@ -30,7 +30,8 @@ const Dashboard: React.FC = () => {
   const { user, isLoaded } = useUser();
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
 
-  const jobCount = useQuery(api.jobs.getJobCount);
+  const jobCount = useQuery(api.jobs.getJobCount, {}); 
+
 
   if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
   if (!user) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
@@ -50,7 +51,6 @@ const Dashboard: React.FC = () => {
               <div className="lg:col-span-1">
                 <ProfileCard />
                 <div className="mt-6 bg-white shadow-lg rounded-lg p-6">
-                  <h2 className="text-xl text-black font-semibold mb-4">Quick Stats</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-blue-100 p-4 rounded">
                       <p className="text-sm text-blue-600">Total Clients</p>

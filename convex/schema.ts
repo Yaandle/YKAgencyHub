@@ -6,9 +6,10 @@ export default defineSchema({
     clerkId: v.string(),
     email: v.string(),
     name: v.optional(v.string()),
-    agencyName: v.optional(v.string()),
-    createdAt: v.number(),
-    updatedAt: v.number(),
+    agencyName: v.optional(v.string()), 
+    userType: v.optional(v.string()),   
+    createdAt: v.float64(),
+    updatedAt: v.float64(),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_email", ["email"])
