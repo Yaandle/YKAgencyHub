@@ -16,6 +16,7 @@ import type {
 import type * as calendar from "../calendar.js";
 import type * as dailyHours from "../dailyHours.js";
 import type * as jobs from "../jobs.js";
+import type * as migrateUserTypes from "../migrateUserTypes.js";
 import type * as mutations from "../mutations.js";
 import type * as queries from "../queries.js";
 import type * as users from "../users.js";
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   calendar: typeof calendar;
   dailyHours: typeof dailyHours;
   jobs: typeof jobs;
+  migrateUserTypes: typeof migrateUserTypes;
   mutations: typeof mutations;
   queries: typeof queries;
   users: typeof users;

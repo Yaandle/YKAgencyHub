@@ -1,23 +1,39 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from 'convex/react';
 import { api } from "@/convex/_generated/api";
+import { useRouter } from 'next/navigation';
 import EmployeeProfileCard from '../../components/EmployeeProfileCard';
 import EmployeeJobList from '../../components/EmployeeJobList';
 import EmployeeCalendar from '../../components/EmployeeCalendar';
 import DropdownSection from '../../components/DropdownSection';
+import UserTypeSelection from '../../components/UserTypeSelection';
 
-const EmployeeDashboard: React.FC = () => {
+const DashboardUser: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
   const [showJobList, setShowJobList] = useState(false);
-  
-  const userData = useQuery(api.users.getUser);
+
+  const userData = useQuery(api.users.getUser, isSignedIn && user?.id ? { clerkId: user.id } : "skip");
   const jobCount = useQuery(api.jobs.getJobCount, { status: undefined });
 
-  if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (!isSignedIn) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
+  useEffect(() => {
+    if (isLoaded && isSignedIn && userData) {
+      if (userData.userType !== 'Employee') {
+        router.push('/dashboard');
+      }
+    }
+  }, [isLoaded, isSignedIn, userData, router]);
+
+  if (!isLoaded || !isSignedIn || !userData) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (userData.userType !== 'Employee') {
+    return null; // This will prevent any flash of content before redirect
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -67,4 +83,4 @@ const EmployeeDashboard: React.FC = () => {
   );
 };
 
-export default EmployeeDashboard;
+export default DashboardUser;

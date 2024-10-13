@@ -4,12 +4,12 @@ import { v } from "convex/values";
 export default defineSchema({
   users: defineTable({
     clerkId: v.string(),
+    name: v.string(),
     email: v.string(),
-    name: v.optional(v.string()),
-    agencyName: v.optional(v.string()), 
-    userType: v.optional(v.string()),   
-    createdAt: v.float64(),
-    updatedAt: v.float64(),
+    userType: v.union(v.literal("Business"), v.literal("Employee")),
+    agencyName: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
   })
     .index("by_clerk_id", ["clerkId"])
     .index("by_email", ["email"])
@@ -23,7 +23,7 @@ export default defineSchema({
     createdBy: v.id("users"),
     hours: v.optional(v.number()),
     assignedUsers: v.array(v.id("users")),
-    status: v.string(), 
+    status: v.union(v.literal("Open"), v.literal("In Progress"), v.literal("Completed")),
     createdAt: v.number(),
     updatedAt: v.number(),
   })

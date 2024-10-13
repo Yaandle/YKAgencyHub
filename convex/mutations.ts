@@ -103,8 +103,8 @@ export const updateAgencyName = mutation({
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
       .first();
 
-    if (!user || user.userType !== "Employer") {
-      throw new Error("Only Employers can have an agency name");
+    if (!user || user.userType !== "Business") {
+      throw new Error("Only Business users can have an agency name");
     }
 
     await ctx.db.patch(user._id, { agencyName: args.agencyName, updatedAt: Date.now() });

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.0.48",
     "@clerk/nextjs": "^5.4.1",
     "@heroicons/react": "^2.1.5",
     "@nextui-org/calendar": "^2.0.11",

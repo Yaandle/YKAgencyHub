@@ -9,7 +9,7 @@ export const createJob = mutation({
     endDate: v.number(),
     hours: v.number(),
     assignedUsers: v.array(v.id("users")),
-    status: v.string(),
+    status: v.union(v.literal("Open"), v.literal("In Progress"), v.literal("Completed")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -46,7 +46,7 @@ export const updateJob = mutation({
     endDate: v.optional(v.number()),
     hours: v.optional(v.number()),
     assignedUsers: v.optional(v.array(v.id("users"))),
-    status: v.optional(v.string()),
+    status: v.optional(v.union(v.literal("Open"), v.literal("In Progress"), v.literal("Completed"))),
   },
   handler: async (ctx, args) => {
     const { id, ...updateFields } = args;
@@ -82,7 +82,7 @@ export const completeJob = mutation({
     // Optional: Check if the user has permission to complete this job
     // if (job.createdBy !== identity.subject) throw new Error("Not authorized");
 
-    await ctx.db.patch(args.id, { status: "completed" });
+    await ctx.db.patch(args.id, { status: "Completed" });
   },
 });
 

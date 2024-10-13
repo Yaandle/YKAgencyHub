@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from 'convex/react';
 import { api } from "@/convex/_generated/api";
+import { useRouter } from 'next/navigation';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import ProfileCard from '@/components/ProfileCard';
 import CalendarSystem from '@/components/Calendar';
@@ -27,14 +28,29 @@ const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = 
 };
 
 const Dashboard: React.FC = () => {
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
 
+  const userData = useQuery(api.users.getUser, isSignedIn && user?.id ? { clerkId: user.id } : "skip");
   const jobCount = useQuery(api.jobs.getJobCount, {}); 
 
 
-  if (!isLoaded) return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  if (!user) return <div className="flex justify-center items-center h-screen">Not authenticated</div>;
+  useEffect(() => {
+    if (isLoaded && isSignedIn && userData) {
+      if (userData.userType !== 'Business') {
+        router.push('/dashboarduser');
+      }
+    }
+  }, [isLoaded, isSignedIn, userData, router]);
+
+  if (!isLoaded || !isSignedIn || !userData) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
+  if (userData.userType !== 'Business') {
+    return null; // This will prevent any flash of content before redirect
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen">

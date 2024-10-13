@@ -1,33 +1,31 @@
-// src/hooks/use-api-query.ts
 "use client";
 
 import { useQuery } from "convex/react";
 import { useEffect, useState } from "react";
 
-export const useApiQuery = <T>(queryFunction: any, args?: any) => {
-  const [data, setData] = useState<T | null>(null);
-  const [pending, setPending] = useState(true);
-  const [error, setError] = useState<any>(null);
+export function useApiQuery(queryFunction: any, args: any) {
+  const [data, setData] = useState<any>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Fetch the data using the query function from Convex
-  const apiQuery = useQuery(queryFunction, args);
+  // Ensure args is an object or undefined
+  const queryArgs = typeof args === 'object' && args !== null ? args : undefined;
+
+  // Use undefined for args if it's "skip" or not an object
+  const apiQuery = args === "skip" ? undefined : useQuery(queryFunction, queryArgs);
 
   useEffect(() => {
-    if (apiQuery !== undefined) {
-      setData(apiQuery as T);
-      setPending(false);
-      setError(null);
-    } else if (apiQuery === undefined) {
-      setPending(true);
+    if (apiQuery !== undefined && apiQuery !== null) {
+      if ('error' in apiQuery) {
+        setError(apiQuery.error);
+      } else {
+        setData(apiQuery);
+      }
     } else {
-      setError(new Error("Failed to fetch data"));
-      setPending(false);
+      // Handle the case when apiQuery is null or undefined
+      setData(null);
+      setError(null);
     }
   }, [apiQuery]);
 
-  return {
-    data,
-    pending,
-    error,
-  };
-};
+  return { data, error };
+}

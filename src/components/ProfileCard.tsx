@@ -3,9 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useApiMutation } from "../hooks/use-api-mutation";
+import { useUser } from "@clerk/nextjs";
 
 const ProfileCard: React.FC = () => {
-  const user = useQuery(api.users.getUser);
+  const { user: clerkUser } = useUser();
+  const user = useQuery(api.users.getUser, { clerkId: clerkUser?.id ?? '' });
   const updateAgencyName = useApiMutation(api.users.updateAgencyName);
   const [editMode, setEditMode] = useState(false);
   const [agencyName, setAgencyName] = useState('');

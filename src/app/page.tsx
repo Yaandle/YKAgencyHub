@@ -17,12 +17,12 @@ export default function Home() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <section className="text-center mb-16">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">Revolutionize Your Business Connections</h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">Connected streamlines the process of finding and connecting with contractors, employees, and professionals across various industries.</p>
-          <Link href="/sign-up" className="bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300">Join Connected Today</Link>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">MY Connect streamlines the process of finding and connecting with contractors, employees, and professionals across various industries.</p>
+          <Link href="/sign-up" className="bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300">Join MY Connect</Link>
         </section>
 
         <section id="features" className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Key Features of Connected</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">Key Features of MY Connect</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { icon: <Search className="w-8 h-8 mb-4" />, title: "Advanced Filtering", description: "Find the perfect match based on location, industry, skills, and availability." },
@@ -55,7 +55,7 @@ export default function Home() {
         </section>
 
         <section id="how-it-works" className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">How Connected Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">How MY Connect Works</h2>
           <div className="max-w-3xl mx-auto">
             <ol className="space-y-6">
               {[
@@ -80,7 +80,7 @@ export default function Home() {
 
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2024 Connected. Revolutionizing business connections.</p>
+          <p>&copy; 2024 MY Connect. Revolutionizing business connections.</p>
         </div>
       </footer>
     </div>
