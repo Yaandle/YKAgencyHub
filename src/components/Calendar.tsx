@@ -4,8 +4,12 @@ import { CalendarDate, DateValue, today, getLocalTimeZone } from '@international
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
-export default function CalendarSystem() {
-  const [selectedDate, setSelectedDate] = useState<DateValue>(() => today(getLocalTimeZone()));
+interface CalendarSystemProps {
+  selectedDate: DateValue;
+  onDateSelect: (date: DateValue) => void;
+}
+
+export default function CalendarSystem({ selectedDate, onDateSelect }: CalendarSystemProps) {
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() + 1 };
@@ -14,7 +18,7 @@ export default function CalendarSystem() {
   const jobs = useQuery(api.calendar.getMonthlyJobs, currentMonth);
 
   const handleDateChange = (date: DateValue) => {
-    setSelectedDate(date);
+    onDateSelect(date);
 
     if (date.month !== currentMonth.month || date.year !== currentMonth.year) {
       setCurrentMonth({ year: date.year, month: date.month });

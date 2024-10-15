@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 
-export default function CreateJobForm() {
+export default function CreateJobs() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [status, setStatus] = useState('pending');
+  const [startTime, setStartTime] = useState('09:00');
+  const [finishTime, setFinishTime] = useState('17:00');
+  const [status, setStatus] = useState<'Open' | 'In Progress' | 'Completed'>('Open');
 
   const createJob = useMutation(api.jobs.createJob);
 
@@ -19,15 +21,18 @@ export default function CreateJobForm() {
         description,
         startDate: new Date(startDate).getTime(),
         endDate: new Date(endDate).getTime(),
-        assignedUsers: [], // You might want to add a user selection feature
+        assignedUsers: [],
         status,
+        startTime,
+        finishTime,
       });
-      // Clear form or show success message
       setTitle('');
       setDescription('');
       setStartDate('');
       setEndDate('');
-      setStatus('pending');
+      setStartTime('09:00');
+      setFinishTime('17:00');
+      setStatus('Open');
       alert('Job created successfully!');
     } catch (error) {
       console.error('Error creating job:', error);
@@ -58,39 +63,65 @@ export default function CreateJobForm() {
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         ></textarea>
       </div>
-      <div>
-        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
-        <input
-          type="date"
-          id="startDate"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
+          <input
+            type="date"
+            id="startDate"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </div>
+        <div>
+          <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
+          <input
+            type="date"
+            id="endDate"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </div>
       </div>
-      <div>
-        <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
-        <input
-          type="date"
-          id="endDate"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">Start Time</label>
+          <input
+            type="time"
+            id="startTime"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </div>
+        <div>
+          <label htmlFor="finishTime" className="block text-sm font-medium text-gray-700">Finish Time</label>
+          <input
+            type="time"
+            id="finishTime"
+            value={finishTime}
+            onChange={(e) => setFinishTime(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
         <select
           id="status"
           value={status}
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => setStatus(e.target.value as 'Open' | 'In Progress' | 'Completed')}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
         >
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
         </select>
       </div>
       <button

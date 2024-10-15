@@ -1,43 +1,36 @@
 import React from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { Id } from '../../convex/_generated/dataModel';
+import { format } from 'date-fns';
 
 interface DailyHoursProps {
-  selectedDate: Date | null;
+  selectedDate: Date;
 }
 
 const DailyHours: React.FC<DailyHoursProps> = ({ selectedDate }) => {
-  const startDate = selectedDate ? selectedDate.getTime() : Date.now();
-  const endDate = startDate + 86400000; // Add 24 hours
-
-  const dailyHours = useQuery(api.dailyHours.getDailyHoursSummary, {
-    startDate,
-    endDate,
-  });
-
-  const jobs = useQuery(api.jobs.listJobs);
-
-  if (dailyHours === undefined || jobs === undefined) return <div>Loading...</div>;
-
-  const jobMap = new Map(jobs.map(job => [job._id, job.title]));
+  const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+  const jobs = useQuery(api.jobs.getJobsForDate, { date: formattedDate });
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">Daily Hours</h2>
-      {Object.entries(dailyHours).map(([date, data]) => (
-        <div key={date} className="mb-4">
-          <h3 className="text-lg font-medium">{new Date(date).toLocaleDateString()}</h3>
-          <p>Total Hours: {data.totalHours}</p>
+    <div className="daily-hours">
+      <h3 className="text-lg font-semibold mb-2">Jobs for {format(selectedDate, 'MMMM d, yyyy')}</h3>
+      {jobs ? (
+        jobs.length > 0 ? (
           <ul>
-            {Object.entries(data.jobs).map(([jobId, hours]) => (
-              <li key={jobId}>
-                {jobMap.get(jobId as Id<"jobs">) || 'Unknown Job'}: {hours} hours
+            {jobs.map((job) => (
+              <li key={job._id} className="mb-2">
+                <strong>{job.title}</strong>
+                <br />
+                {format(new Date(job.startDate), 'h:mm a')} - {format(new Date(job.startDate + job.hours * 3600000), 'h:mm a')}
               </li>
             ))}
           </ul>
-        </div>
-      ))}
+        ) : (
+          <p>No jobs scheduled for this date.</p>
+        )
+      ) : (
+        <p>Loading jobs...</p>
+      )}
     </div>
   );
 };

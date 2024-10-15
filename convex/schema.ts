@@ -21,11 +21,14 @@ export default defineSchema({
     startDate: v.number(),
     endDate: v.number(),
     createdBy: v.id("users"),
-    hours: v.optional(v.number()),
+    hours: v.number(), // Changed from optional to required
     assignedUsers: v.array(v.id("users")),
     status: v.union(v.literal("Open"), v.literal("In Progress"), v.literal("Completed")),
     createdAt: v.number(),
     updatedAt: v.number(),
+    startTime: v.string(),
+    finishTime: v.string(),
+    dailyHours: v.number(),
   })
     .index("by_created_by", ["createdBy"])
     .index("by_assigned_user", ["assignedUsers"])
@@ -46,14 +49,13 @@ export default defineSchema({
     .index("by_date", ["date"]),
 
   dailyHours: defineTable({
-    userId: v.id("users"),
+    userId: v.string(),
     jobId: v.id("jobs"),
-    date: v.number(), 
+    date: v.number(),
     hours: v.number(),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
     .index("by_user_and_date", ["userId", "date"])
-    .index("by_job", ["jobId"])
-    .index("by_date", ["date"]),
+    .index("by_job", ["jobId"]),
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from 'convex/react';
 import { api } from "@/convex/_generated/api";
@@ -10,6 +10,9 @@ import ProfileCard from '@/components/ProfileCard';
 import CalendarSystem from '@/components/Calendar';
 import CreateJobForm from '@/components/CreateJobs';
 import JobList from '@/components/dashboard/JobList';
+import DailyHours from '@/components/DailyHours';
+import { DateValue, today, getLocalTimeZone } from '@internationalized/date';
+import { parseDate } from '@internationalized/date';
 
 const DropdownSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +34,10 @@ const Dashboard: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const [showCreateJobForm, setShowCreateJobForm] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<DateValue>(() => today(getLocalTimeZone()));
+
+  // Convert DateValue to Date for DailyHours
+  const selectedJSDate = useMemo(() => new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day), [selectedDate]);
 
   const userData = useQuery(api.users.getUser, isSignedIn && user?.id ? { clerkId: user.id } : "skip");
   const jobCount = useQuery(api.jobs.getJobCount, {}); 
@@ -97,10 +104,20 @@ const Dashboard: React.FC = () => {
                   </DropdownSection>
                 </DropdownSection>
 
-                {/* Calendar System */}
+                {/* Calendar System and Daily Hours */}
                 <div className="mt-6 bg-white shadow-lg rounded-lg p-6">
                   <h2 className="text-xl text-black font-semibold mb-4">Job Schedule</h2>
-                  <CalendarSystem />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <CalendarSystem 
+                        selectedDate={selectedDate}
+                        onDateSelect={setSelectedDate}
+                      />
+                    </div>
+                    <div>
+                      <DailyHours selectedDate={selectedJSDate} />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
