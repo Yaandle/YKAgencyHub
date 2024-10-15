@@ -9,7 +9,6 @@ import EmployeeProfileCard from '../../components/EmployeeProfileCard';
 import EmployeeJobList from '../../components/EmployeeJobList';
 import EmployeeCalendar from '../../components/EmployeeCalendar';
 import DropdownSection from '../../components/DropdownSection';
-import UserTypeSelection from '../../components/UserTypeSelection';
 
 const DashboardUser: React.FC = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -32,7 +31,7 @@ const DashboardUser: React.FC = () => {
   }
 
   if (userData.userType !== 'Employee') {
-    return null; // This will prevent any flash of content before redirect
+    return null;
   }
 
   return (
@@ -42,38 +41,42 @@ const DashboardUser: React.FC = () => {
           <h1 className="text-3xl font-bold text-gray-900">Employee Dashboard</h1>
         </div>
       </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Profile Section */}
-              <div className="lg:col-span-1">
-                {userData === undefined ? (
-                  <div>Loading profile...</div>
-                ) : (
-                  <EmployeeProfileCard employeeDetails={userData} />
-                )}
-              </div>
-
-              {/* Job and Calendar Section */}
-              <div className="lg:col-span-2 text-black">
-                <DropdownSection title="Job Management">
-                  <button
-                    onClick={() => setShowJobList(!showJobList)}
-                    className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    {showJobList ? 'Hide Job List' : 'View My Jobs'}
-                  </button>
-                  {showJobList && <EmployeeJobList />}
-                  {jobCount !== undefined && (
-                    <p>Total jobs: {jobCount}</p>
-                  )}
-                </DropdownSection>
-
-                <div className="mt-6 bg-white shadow-lg rounded-lg p-6">
-                  <h2 className="text-xl text-black font-semibold mb-4">My Schedule</h2>
-                  <EmployeeCalendar />
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Profile Section */}
+            <div className="lg:col-span-1 space-y-6">
+              {userData === undefined ? (
+                <div>Loading profile...</div>
+              ) : (
+                <EmployeeProfileCard employeeDetails={userData} />
+              )}
+              <div className="bg-white shadow-lg rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">Quick Stats</h2>
+                <div className="bg-blue-100 p-4 rounded">
+                  <p className="text-sm text-blue-600">Assigned Jobs</p>
+                  <p className="text-2xl font-bold">
+                    {jobCount !== undefined ? jobCount : 'Loading...'}
+                  </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Job and Calendar Section */}
+            <div className="lg:col-span-2 space-y-6">
+              <DropdownSection title="Job Management">
+                <button
+                  onClick={() => setShowJobList(!showJobList)}
+                  className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300"
+                >
+                  {showJobList ? 'Hide Job List' : 'View My Jobs'}
+                </button>
+                {showJobList && <EmployeeJobList />}
+              </DropdownSection>
+
+              <div className="bg-white shadow-lg rounded-lg p-6">
+                <h2 className="text-xl font-semibold mb-4">My Schedule</h2>
+                <EmployeeCalendar />
               </div>
             </div>
           </div>

@@ -40,20 +40,6 @@ export default function Home() {
             ))}
           </div>
         </section>
-
-        <section id="industries" className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Industries We Serve</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {['Agriculture', 'Construction', 'Mining', 'Logistics', 'Finance', 'Consulting',].map((industry) => (
-              <div key={industry} className="bg-white p-4 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">{industry}</h3>
-                <p className="mb-4">Find skilled professionals and businesses in the {industry.toLowerCase()} sector.</p>
-                <Link href="#" className="text-blue-600 hover:text-blue-700">Explore {industry}</Link>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section id="how-it-works" className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">How MY Connect Works</h2>
           <div className="max-w-3xl mx-auto">
@@ -76,6 +62,20 @@ export default function Home() {
             </ol>
           </div>
         </section>
+        <section id="industries" className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">Industries We Serve</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {['Agriculture', 'Construction', 'Mining', 'Logistics', 'Finance', 'Consulting',].map((industry) => (
+              <div key={industry} className="bg-white p-4 rounded-lg shadow-md">
+                <h3 className="text-xl font-semibold mb-2">{industry}</h3>
+                <p className="mb-4">Find skilled professionals and businesses in the {industry.toLowerCase()} sector.</p>
+                <Link href="#" className="text-blue-600 hover:text-blue-700">Explore {industry}</Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+
       </main>
 
       <footer className="bg-gray-800 text-white py-8">
